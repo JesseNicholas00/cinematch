@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "277315842479",
+    "firebase_url": "https://cinematch-e30fb.firebaseio.com",
+    "project_id": "cinematch-e30fb",
+    "storage_bucket": "cinematch-e30fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277315842479:android:5e16ccb40c7e11329eff5a",
+        "android_client_info": {
+          "package_name": "com.example.cinematch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277315842479-l2batr4o6g1a1oi5b66ookvgjg3r0q12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy0oHZWe5TanIVHrEzaUA1kefVHtGU-2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277315842479-l2batr4o6g1a1oi5b66ookvgjg3r0q12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
