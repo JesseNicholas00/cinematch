@@ -32,13 +32,18 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
     );
   }
-  
+
   void goToLoginPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(), fullscreenDialog: true));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LoginPage(), fullscreenDialog: true));
   }
 
   void goToRegisterPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage(), fullscreenDialog: true));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RegisterPage(), fullscreenDialog: true));
   }
 }
-

@@ -20,7 +20,8 @@ class _RegisterPageState extends State<RegisterPage> {
       form.save();
       try {
         FirebaseUser user = (await FirebaseAuth.instance
-                .createUserWithEmailAndPassword(email: _email, password: _password))
+                .createUserWithEmailAndPassword(
+                    email: _email, password: _password))
             .user;
 
         user.sendEmailVerification();
