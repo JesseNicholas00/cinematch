@@ -1,4 +1,4 @@
-import 'package:cinematch/screens/Home.dart';
+import 'package:cinematch/screens/Index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
         assert(await user.getIdToken() != null);
 
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Home()));
+            context, MaterialPageRoute(builder: (context) => Index()));
       } catch (e) {
         print(e.message);
       }
