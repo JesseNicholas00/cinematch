@@ -7,7 +7,6 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  
   List<LeaderBoard> list = <LeaderBoard>[
     LeaderBoard("Flutter", 54),
     LeaderBoard("React", 22.5),
@@ -35,11 +34,16 @@ class _SearchState extends State<Search> {
                 hideSearchBoxWhenItemSelected: false,
                 listContainerHeight: MediaQuery.of(context).size.height / 4,
                 queryBuilder: (query, list) {
-                  return list
+                  List queryResult = list
                       .where((item) => item.username
                           .toLowerCase()
                           .contains(query.toLowerCase()))
                       .toList();
+
+                  if (queryResult.length == 0)
+                    return <LeaderBoard>[LeaderBoard(query, 1)];
+                  else
+                    return queryResult;
                 },
                 popupListItemBuilder: (item) {
                   return PopupListItemWidget(item);

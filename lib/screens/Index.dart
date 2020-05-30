@@ -12,9 +12,7 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  
+
   static Search search = new Search();
   static Watchlist watchList = new Watchlist();
   static HomePage homePage = new HomePage();
