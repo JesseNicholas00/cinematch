@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Watchlist extends StatefulWidget{
+class Watchlist extends StatefulWidget {
   @override
   _WatchListState createState() => _WatchListState();
 }
 
-class _WatchListState extends State<Watchlist>{
-  
+class _WatchListState extends State<Watchlist> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
