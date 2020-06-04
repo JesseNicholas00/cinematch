@@ -11,7 +11,7 @@ class MovieApiProvider{
 
   Future<ItemModel> fetchMovieList() async{
     final response = await client
-        .get("$_baseURL/popular?api_key=$_apiKey");
+        .get("$_baseURL/movie/popular?api_key=$_apiKey");
 
     if(response.statusCode == 200){
       return ItemModel.fromJSON(json.decode(response.body));

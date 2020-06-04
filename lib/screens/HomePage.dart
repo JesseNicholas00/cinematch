@@ -1,20 +1,8 @@
-import 'package:cinematch/bloc/movie_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cinematch/models/ItemModel.dart';
-
-class MatchCard {
-  double margin = 0;
-  int r = 0;
-  int g = 0;
-  int b = 0;
-
-  MatchCard(double marginTop, int red, int green, int blue) {
-    margin = marginTop;
-    r = red;
-    b = blue;
-    g = green;
-  }
-}
+import 'package:http/http.dart' show Client;
+import 'dart:async';
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,80 +11,83 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Widget> cardList;
+  Client client = Client();
+  ItemModel item;
 
   void _removeCard(index) {
     setState(() {
       cardList.removeAt(index);
-      if(cardList.length == 0) {
-        _getMatchCard();
-      }
     });
+  }
+
+  Future<ItemModel> getMovies() async {
+    final req = await client.get(
+        "https://api.themoviedb.org/3/movie/popular?api_key=47cdc06d19f09328eac1f45414e6593b");
+    item = ItemModel.fromJSON(json.decode(req.body));
+
+    return Future.value();
   }
 
   @override
   void initState() {
     super.initState();
-    print(bloc.fetchAllMovies());
-    cardList = _getMatchCard();
   }
 
   Widget build(BuildContext context) {
-    print(bloc.allMovies);
     return Scaffold(
       body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: cardList,
+        child: FutureBuilder<ItemModel>(
+          future: getMovies(),
+          builder: (BuildContext context, AsyncSnapshot<ItemModel> snapshot) {
+            List<Widget> children;
+            if (snapshot.hasData) {
+              children = null;
+            }
+            else if (snapshot.hasError) {
+              children = <Widget>[
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text('Error: ${snapshot.error}'),
+                )
+              ];
+            } else {
+              children = <Widget>[
+                SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 60,
+                  height: 60,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text('Awaiting result...'),
+                )
+              ];
+            }
+
+            return Center(
+              child: Column(
+                children: children,
+              ),
+            );
+          },
         ),
+        // child: Stack(
+        //   alignment: Alignment.center,
+        //   children: cardList,
+        // ),
       ),
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return StreamBuilder(
-  //       stream: bloc.allMovies,
-  //       builder: (context, AsyncSnapshot<ItemModel> snapshot) {
-  //         if (snapshot.hasData) {
-  //           return buildList(snapshot);
-  //         } else if (snapshot.hasError) {
-  //           return Text(snapshot.error.toString());
-  //         }
-  //         return Center(child: CircularProgressIndicator());
-  //       },
-  //     );
-  // }
-
-  Widget buildList(AsyncSnapshot<ItemModel> snapshot) {
-    return GridView.builder(
-      itemCount: snapshot.data.results.length,
-      gridDelegate:
-      new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (BuildContext context, int index) {
-        return GridTile(
-          child: InkResponse(
-            enableFeedback: true,
-            child: Image.network(
-              'https://image.tmdb.org/t/p/w185${snapshot.data
-                  .results[index].posterPath}',
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      });
-  }
-
-  List<Widget> _getMatchCard() {
-    List<MatchCard> cards = new List();
-    cards.add(MatchCard(10, 0, 0, 255));
-    cards.add(MatchCard(20, 0, 255, 0));
-    cards.add(MatchCard(30, 255, 0, 0));
-
-    List<Widget> cardList = new List();
-
-    for (int x = 0; x < 3; x++) {
+  List<Widget> _getMatchCard(ItemModel items) {
+    for (int x = 0; x < items.results.length && cardList.length < 20; x++) {
       cardList.add(Positioned(
-        top: cards[x].margin,
+        top: 100,
         child: Draggable(
           onDragEnd: (drag) {
             if (drag.offset.direction > 1) {
@@ -109,7 +100,7 @@ class _HomePageState extends State<HomePage> {
           childWhenDragging: Container(),
           feedback: Card(
             elevation: 12,
-            color: Color.fromARGB(255, cards[x].r, cards[x].g, cards[x].b),
+            color: Color.fromARGB(255, 0, 0, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Container(
@@ -119,7 +110,7 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Card(
             elevation: 12,
-            color: Color.fromARGB(255, cards[x].r, cards[x].g, cards[x].b),
+            color: Color.fromARGB(255, 0, 0, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Container(
