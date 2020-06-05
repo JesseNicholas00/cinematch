@@ -38,36 +38,93 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('Register')),
-      body: new Container(
-        padding: EdgeInsets.all(16.0),
-        child: new Form(
-          key: formKey,
-          child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                new TextFormField(
-                  decoration: new InputDecoration(labelText: 'Email'),
-                  validator: (value) =>
-                      value.isEmpty ? 'No empty emails' : null,
-                  onSaved: (value) => _email = value,
-                ),
-                new TextFormField(
-                  decoration: new InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: (value) =>
-                      value.isEmpty ? 'No Empty Password' : null,
-                  onSaved: (value) => _password = value,
-                ),
-                new RaisedButton(
-                  child:
-                      new Text('Register', style: new TextStyle(fontSize: 20)),
-                  onPressed: register,
-                )
-              ]),
+    return new Container(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          //TITLE
+          appBar: new AppBar(
+            title: new Text('REGISTER', style: TextStyle(color: Colors.red[600], fontWeight: FontWeight.bold)),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            iconTheme: IconThemeData(
+              color: Colors.red[800]
+            ),
+            elevation: 0.0,
+            ),
+          body: new Container(
+            padding: EdgeInsets.all(16.0),
+            child: new Form(
+              key: formKey,
+              child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                     Container(
+                      child:new TextFormField(
+                        decoration: new InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "Email",
+                          ),
+                        validator: (value) =>
+                            value.isEmpty ? 'No empty emails' : null,
+                        onSaved: (value) => _email = value,
+                      ),
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10)
+                    ),
+                    Container(
+                      child: new TextFormField(
+                        decoration: new InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "Password",
+                          ),
+                        obscureText: true,
+                        validator: (value) =>
+                            value.isEmpty ? 'No Empty Password' : null,
+                        onSaved: (value) => _password = value,
+                      ),
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10)
+                    ),
+                    //REGISTER BUTTON
+                    Container(
+                      child: new RaisedButton(
+                        child:
+                            new Text('Register', style: new TextStyle(fontSize: 20, color: Colors.red[800])),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(18.0),
+                          ),
+                        onPressed: register,
+                      ),
+                      height: 48.0,
+                      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                    )
+                  ]),
+            ),
+          ),
         ),
-      ),
+        decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bg_welcomePage.jpg'),
+          fit: BoxFit.fill,
+          ),
+        ),
     );
   }
 }

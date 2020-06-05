@@ -12,23 +12,50 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cinematch'),
+    return Container(
+        child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              child: Image.asset('assets/images/nama_logo.png'),
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 50), 
+            ),
+            Container(
+              child: new RaisedButton(
+                child: new Text('login ', style: new TextStyle(fontSize: 20, color: Colors.red[800])),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(18.0),
+                  ),
+                onPressed: goToLoginPage,
+              ),
+              height: 48.0,
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 50), 
+            ),
+            Container(
+              child: new RaisedButton(
+                child: new Text('register ', style: new TextStyle(fontSize: 20, color: Colors.red[800])),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(18.0),
+                  ),
+                onPressed: goToRegisterPage,
+              ),
+              height: 48.0,
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 50)
+
+            )
+          ],
+        ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          new RaisedButton(
-            child: new Text('Login ', style: new TextStyle(fontSize: 20)),
-            onPressed: goToLoginPage,
-          ),
-          new RaisedButton(
-            child: new Text('Register ', style: new TextStyle(fontSize: 20)),
-            onPressed: goToRegisterPage,
-          ),
-        ],
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bg_welcomePage.jpg'),
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }
