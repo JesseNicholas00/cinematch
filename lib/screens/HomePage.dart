@@ -73,7 +73,7 @@ class MovieCardList extends StatelessWidget {
     CardController controller = CardController();
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.8,
       child: new TinderSwapCard(
         orientation: AmassOrientation.BOTTOM,
         totalNum: movies.length,
@@ -84,7 +84,7 @@ class MovieCardList extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width * 0.8,
         minHeight: MediaQuery.of(context).size.width * 0.8,
         cardBuilder: (context, index) => Card(
-          child: Image.asset('https://image.tmdb.org/t/p/w185${movies[index].posterPath}'),
+          child: Image.network('https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
         ),
         cardController: controller,
         swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
