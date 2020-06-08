@@ -20,4 +20,16 @@ class MovieApiProvider{
       throw Exception('failed to load data');
     }
   }
+
+  Future<ItemModel> fetchGenreList() async{
+    final response = await client
+        .get("$_baseURL/movie/popular?api_key=$_apiKey");
+
+    if(response.statusCode == 200){
+      return ItemModel.fromJSON(json.decode(response.body));
+    }
+    else{
+      throw Exception('failed to load data');
+    }
+  }
 }
