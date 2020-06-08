@@ -36,22 +36,24 @@ class _IndexState extends State<Index> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            title: Text('Search'),
+            title: Text('search'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            title: Text('Index'),
+            title: Text('home'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            title: Text('Watch List'),
+            title: Text('watchlist'),
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.red[800],
         onTap: _onItemTapped,
       ),
     );

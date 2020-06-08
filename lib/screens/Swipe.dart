@@ -68,6 +68,7 @@ class _SwipeState extends State<Swipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
           title: Text('CINEMATCH',
               style: TextStyle(
@@ -79,7 +80,6 @@ class _SwipeState extends State<Swipe> {
                 onPressed: _pushSettings,
                 icon: Icon(Icons.settings, color: Colors.grey))
           ]),
-      backgroundColor: Colors.white,
       body: Center(),
     );
   }

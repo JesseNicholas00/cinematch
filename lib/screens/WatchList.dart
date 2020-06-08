@@ -8,6 +8,7 @@ class Watchlist extends StatefulWidget {
 class _WatchListState extends State<Watchlist> {
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView(
         children: <Widget>[
           Padding(
