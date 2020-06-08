@@ -94,9 +94,8 @@ class MovieList extends StatelessWidget {
           child: InkResponse(
             splashColor: Colors.red,
             enableFeedback: true,
-            child: Image.network(
+            child: Image.asset(
               'https://image.tmdb.org/t/p/w185${movies[index].posterPath}',
-              fit: BoxFit.cover,
             ),
             onTap: () => goToMovieDetailPage(movies[index]),
           ),
