@@ -15,37 +15,62 @@ class MovieDetailPage extends StatelessWidget {
     for (int i = 0; i < movie.genreIds.length; i++) {
       genres.add(genreDict[movie.genreIds[i]]);
     }
-
-    return Scaffold(
-        body: new Row(
+    String movieTitleAppBar = movie.originalTitle.toUpperCase() + " (" + movie.releaseDate.substring(0,4) + ")";
+    return Container( 
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(movieTitleAppBar,
+              style: TextStyle(
+                  color: Colors.red[800], fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          iconTheme: IconThemeData(color: Colors.grey),
+          
+          ),
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView( child: new Column(
             children: <Widget>[
-              Image.network('https://image.tmdb.org/t/p/w185/${movie.posterPath}'),
-              new Row(
-                  children: <Widget>[
-                    Text(
-                      'Rating: ${movie.voteAverage}/5',
-                      //style: TextStyle(),
-                    ),
-                    Text(
-                      '${movie.title} (${movie.releaseDate})',
-                      //style: TextStyle(),
-                    ),
-                    Text(
-                      '${movie.originalTitle} (Original Title)',
-                      //style: TextStyle(),
-                    ),
-                    Text(
-                      genres.reduce((value, element) => value + ',' + element)
-                      //style: TextStyle(),
-                    ),
-                  ]
+              Container(child: Image(
+                  image: NetworkImage('https://image.tmdb.org/t/p/w185/${movie.posterPath}'),
+                  fit: BoxFit.fill,
+                ),
+                width: double.infinity,
+                padding: EdgeInsets.all(0),
               ),
-              Text(
-                '${movie.overview}',
-                textAlign: TextAlign.justify,
-              )
+              new Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column( 
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    Text(
+                      '${movie.title} (${movie.releaseDate.substring(0,4)})', textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black54, fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+                    Text('GENRE(s): '+
+                      genres.reduce((value, element) => value + ', ' + element),textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black54, fontSize: 11, fontStyle: FontStyle.italic),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'RATING: ${movie.voteAverage}/10',textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black54, fontSize: 17),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'SYNOPSIS: ${movie.overview}',
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(color: Colors.black54),
+                    )
+                  ]
+              
+              )),
+              
         ]
-    )
+    ))
+    ),
+    padding: EdgeInsets.all(0),
+    color: Colors.white,
     );
   }
 }
