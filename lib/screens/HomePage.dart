@@ -7,7 +7,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'WatchList.dart';
 
 Future<List<Movie>> fetchMovies(Client client) async {
   final response = await client.get(
@@ -108,7 +107,6 @@ class MovieCardList extends StatelessWidget {
   Widget build(BuildContext context) {
     CardController controller = CardController();
     curr = controller;
-    int choosenIndex;
 
     void addToWatchList(Movie movie) async {
       final dbReference = Firestore.instance;
@@ -117,15 +115,15 @@ class MovieCardList extends StatelessWidget {
       dbReference.collection("users").document(user.uid).updateData({'watchlist': FieldValue.arrayUnion([movie.data])});
     }
 
-    void updatePreference(Movie movie, String status) async {
-      final dbReference = Firestore.instance;
-      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    // void updatePreference(Movie movie, String status) async {
+    //   final dbReference = Firestore.instance;
+    //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-      dbReference.collection("users").document(user.uid).updateData({
-          "preference": FieldValue.arrayUnion([movie.getData])
-        }
-      );
-    }
+    //   dbReference.collection("users").document(user.uid).updateData({
+    //       "preference": FieldValue.arrayUnion([movie.getData])
+    //     }
+    //   );
+    // }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -161,7 +159,6 @@ class MovieCardList extends StatelessWidget {
         ),
         cardController: controller,
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
-          choosenIndex = index;
           if(orientation == CardSwipeOrientation.RIGHT) {
             addToWatchList(movies[index]);
           }
@@ -171,10 +168,7 @@ class MovieCardList extends StatelessWidget {
           if (align.x < 0) {
             //Card is LEFT swiping
           } else if (align.x > 0) {
-            String temp = '${movies[choosenIndex].originalTitle.toUpperCase()}';
-            if(items.contains(temp)){
-              items.add(temp);
-            }
+            //Card is RIGHT swiping
           }
         },
       ),
