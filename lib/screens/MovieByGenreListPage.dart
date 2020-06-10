@@ -47,7 +47,7 @@ class _MovieByGenreListPageState extends State<MovieByGenreListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text('Search Bar'),
+        title: new Text('Search'),
       ),
       body: FutureBuilder<List<Movie>>(
         future: movies,
@@ -59,7 +59,7 @@ class _MovieByGenreListPageState extends State<MovieByGenreListPage> {
               return MovieList(movies: snapshot.data, context: context);
             }
           } else {
-            return CircularProgressIndicator(); // loading
+            return Center(child:CircularProgressIndicator()); // loading
           }
         },
       ),

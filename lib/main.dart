@@ -1,3 +1,4 @@
+import 'package:cinematch/screens/Index.dart';
 import 'package:cinematch/screens/auth/WelcomePage.dart';
 import 'package:flutter/material.dart';
 
@@ -9,9 +10,12 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Cinematch',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
       home: new WelcomePage(),
+      routes: {
+        "/logout": (_) => new WelcomePage(),
+      }
     );
   }
 }

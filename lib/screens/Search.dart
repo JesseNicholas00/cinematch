@@ -23,6 +23,14 @@ Future<List<Genre>> fetchGenres(Client client) async {
   return genres;
 }
 
+class Profile {
+  final List<String> photos;
+  final String name;
+  final String bio;
+
+  Profile({this.photos, this.name, this.bio});
+}
+
 class Search extends StatefulWidget {
   Search({Key key}) : super(key: key);
 
@@ -43,8 +51,13 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text('Search Bar'),
-      ),
+          title: Text('SEARCH',
+              style: TextStyle(
+                  color: Colors.red[800], fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          automaticallyImplyLeading: false
+          ),
       body: FutureBuilder<List<Genre>>(
         future: genres,
         builder: (context, snapshot) {
@@ -55,7 +68,7 @@ class _SearchState extends State<Search> {
               return GenreList(genres: snapshot.data, context: context);
             }
           } else {
-            return CircularProgressIndicator(); // loading
+            return Center(child: CircularProgressIndicator()); // loading
           }
         },
       ),
@@ -80,13 +93,13 @@ class GenreList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       itemCount: genres.length,
       itemBuilder: (context, index) {
         return InkWell(
             onTap: () => goToMovieByGenreListPage(genres[index].id),
             child: Card(
-              color: Colors.blueAccent,
+              color: Colors.red[800],
               child: Container(
                 padding: EdgeInsets.all(4),
                 child: Center(

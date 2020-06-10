@@ -3,25 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinematch/models/Movie.dart';
 
-Future<String> getUID() async {
-  
-  final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-
-  return user.uid;
-}
-
-Stream<DocumentSnapshot> fetchWatchList(String uid)  {
-
-  final dbReference = Firestore.instance;
-  
-  Stream<DocumentSnapshot> dr = dbReference.collection('users').document(uid).snapshots();
-  
-  print(dr);
-  
-  return dr;
-}
+final List<String> items = [];
 
 class Watchlist extends StatefulWidget {
+  Watchlist({Key key}) : super(key: key);
   @override
   _WatchListState createState() => _WatchListState();
 }
@@ -29,29 +14,51 @@ class Watchlist extends StatefulWidget {
 class _WatchListState extends State<Watchlist> {
   final dbReference = Firestore.instance;
 
-  Stream<DocumentSnapshot> watchlist;
-  String uid;
-
-  @override
-  void initState() { 
-    super.initState();
-    getUID().then((value) => setState((){
-      uid = value;
-    }));
-    watchlist = fetchWatchList(uid);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: watchlist,
-      builder: (context, snapshot) {
-        if(!snapshot.hasData) {
-          return new Text('Loading...');
-        }
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('WATCHLIST',
+              style: TextStyle(
+                  color: Colors.red[800], fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          automaticallyImplyLeading: false
+          ),
+        
+        body: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
 
-        return new Text(snapshot.data['watchlist']);
-      },
+            return Dismissible(
+              // Each Dismissible must contain a Key. Keys allow Flutter to
+              // uniquely identify widgets.
+              key: Key(item),
+              // Provide a function that tells the app
+              // what to do after an item has been swiped away.
+              onDismissed: (direction) {
+                // Remove the item from the data source.
+                setState(() {
+                  items.removeAt(index);
+                });
+                // Then show a snackbar.
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text("$item dismissed")));
+              },
+              // Show a red background as the item is swiped away.
+              background: Container(
+                child: Align(
+                  alignment: Alignment.centerRight, // Align however you like (i.e .centerRight, centerLeft)
+                  child: Text("remove ",
+                    style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+              color: Colors.red),
+              child: ListTile(title: Text('$item')),
+            );
+          },
+        ),
     );
   }
 }
