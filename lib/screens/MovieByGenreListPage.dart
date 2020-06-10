@@ -67,10 +67,16 @@ class _MovieByGenreListPageState extends State<MovieByGenreListPage> {
 
   @override
   Widget build(BuildContext context) {
+    //String genreChoosen = genreDict[genreId];
     return Scaffold(
       appBar: AppBar(
-        title: new Text('Search'),
-      ),
+          title: Text('SEARCH',
+              style: TextStyle(
+                  color: Colors.red[800], fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          automaticallyImplyLeading: false
+          ),
       body: FutureBuilder<List<Movie>>(
         future: movies,
         builder: (context, snapshot) {
@@ -107,8 +113,8 @@ class MovieList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemCount: movies.length,
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      itemCount: movies.length, 
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(

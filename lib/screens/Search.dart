@@ -103,7 +103,7 @@ class GenreList extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(4),
                 child: Center(
-                  child: Text(genres[index].name),
+                  child: Text(genres[index].name.toUpperCase(), style: TextStyle(color: Colors.white),),
                 ),
               ),
             ));
