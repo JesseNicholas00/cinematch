@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cinematch/models/Movie.dart';
 import 'package:http/http.dart' show Client;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<List<Movie>> fetchMovies(Client client) async {
   final response = await client.get(
@@ -69,8 +71,24 @@ class MovieCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     CardController controller = CardController();
+
+    void addToWatchList(Movie movie) async {
+      final dbReference = Firestore.instance;
+      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+      dbReference.collection("users").document(user.uid).updateData({'watchlist': movie.data});
+    }
+
+    void updatePreference(Movie movie, String status) async {
+      final dbReference = Firestore.instance;
+      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+      dbReference.collection("users").document(user.uid).updateData({
+          "preference": FieldValue.arrayUnion([movie.getData])
+        }
+      );
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
@@ -84,7 +102,8 @@ class MovieCardList extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width * 0.8,
         minHeight: MediaQuery.of(context).size.width * 0.8,
         cardBuilder: (context, index) => Card(
-          child: Image.network('https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
+          child: Image.network(
+              'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
         ),
         cardController: controller,
         swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
@@ -97,6 +116,12 @@ class MovieCardList extends StatelessWidget {
         },
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
           /// Get orientation & index of swiped card!
+          if (orientation == CardSwipeOrientation.LEFT) {
+            // updatePreference(movies[index], "dislike");
+          } else if (orientation == CardSwipeOrientation.RIGHT) {
+            addToWatchList(movies[index]);
+            // updatePreference(movies[index], "like");
+          }
         },
       ),
     );

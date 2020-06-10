@@ -1,6 +1,7 @@
 import 'package:cinematch/screens/auth/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -25,6 +26,17 @@ class _RegisterPageState extends State<RegisterPage> {
             .user;
 
         user.sendEmailVerification();
+
+        Map<String, dynamic> userInfo;
+
+        userInfo = {
+          "preference": [],
+          "watchlist": []
+        };
+
+        final dbReference = Firestore.instance;
+        
+        dbReference.collection("users").document(user.uid).setData(userInfo);
 
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
