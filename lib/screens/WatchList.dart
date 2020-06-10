@@ -60,7 +60,7 @@ class _WatchListState extends State<Watchlist> {
             future: getWatchListItems(),
             builder: (_, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               }
 
               return ListView.builder(
