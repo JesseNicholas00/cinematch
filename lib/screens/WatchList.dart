@@ -34,7 +34,7 @@ class _WatchListState extends State<Watchlist> {
             return Dismissible(
               // Each Dismissible must contain a Key. Keys allow Flutter to
               // uniquely identify widgets.
-              key: Key(item),
+              key: UniqueKey(), 
               // Provide a function that tells the app
               // what to do after an item has been swiped away.
               onDismissed: (direction) {

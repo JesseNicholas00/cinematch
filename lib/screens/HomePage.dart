@@ -157,11 +157,17 @@ class MovieCardList extends StatelessWidget {
             //Card is LEFT swiping
           } else if (align.x > 0) {
             String temp = '${movies[choosenIndex].originalTitle.toUpperCase()}';
-            if(items.contains(temp)){
+            if(!items.isEmpty){
+              if(!items.contains(temp)){
+                items.add(temp);
+                print(choosenIndex);
+              }
+            }
+            else{
               items.add(temp);
             }
           }
-        },
+          }
       ),
     );
   }
