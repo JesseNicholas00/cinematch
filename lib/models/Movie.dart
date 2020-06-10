@@ -14,6 +14,8 @@ class Movie {
   String _overview;
   String _releaseDate;
 
+  Map<String,dynamic> data;
+
   Movie.fromJSON(Map<String, dynamic> movie) {
     _voteCount = movie['vote_count'];
     _id = movie['id'];
@@ -33,7 +35,11 @@ class Movie {
     _adult = movie['adult'];
     _overview = movie['overview'];
     _releaseDate = movie['release_date'];
+
+    data = movie;
   }
+
+  Map<String, dynamic> get getData => data;
 
   String get releasDate => _releaseDate;
 

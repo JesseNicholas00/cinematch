@@ -110,10 +110,26 @@ class MovieCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     CardController controller = CardController();
     curr = controller;
     int choosenIndex;
+
+    void addToWatchList(Movie movie) async {
+      final dbReference = Firestore.instance;
+      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+      dbReference.collection("users").document(user.uid).updateData({'watchlist': movie.data});
+    }
+
+    void updatePreference(Movie movie, String status) async {
+      final dbReference = Firestore.instance;
+      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+      dbReference.collection("users").document(user.uid).updateData({
+          "preference": FieldValue.arrayUnion([movie.getData])
+        }
+      );
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
