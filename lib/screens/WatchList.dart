@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final List<String> items = [];
+final List<String> items = ['item','item','item'];
 
 class Watchlist extends StatefulWidget {
   Watchlist({Key key}) : super(key: key);
@@ -32,7 +32,7 @@ class _WatchListState extends State<Watchlist> {
             return Dismissible(
               // Each Dismissible must contain a Key. Keys allow Flutter to
               // uniquely identify widgets.
-              key: Key(item),
+              key: UniqueKey(),
               // Provide a function that tells the app
               // what to do after an item has been swiped away.
               onDismissed: (direction) {
