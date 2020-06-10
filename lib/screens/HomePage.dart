@@ -1,4 +1,5 @@
-import 'package:cinematch/screens/Index.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cinematch/models/Movie.dart';
 import 'package:http/http.dart' show Client;
@@ -23,7 +24,6 @@ Future<List<Movie>> fetchMovies(Client client) async {
   return movies;
 }
 
-//maaf ni haram bgt gua pakek global variable :(
 CardController curr;
 
 class HomePage extends StatefulWidget {
@@ -35,11 +35,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> cardList;
   Client client = Client();
   Future<List<Movie>> movies;
-  //----------------------coba disaster
-  // void _pushSettings() {
-  //   Navigator.push(context, MaterialPageRoute(builder: (context) => temp()),);
-  // }
-  //----------------------end disaster
+  
   @override
   void initState() {
     super.initState();
@@ -118,7 +114,7 @@ class MovieCardList extends StatelessWidget {
       final dbReference = Firestore.instance;
       final FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-      dbReference.collection("users").document(user.uid).updateData({'watchlist': movie.data});
+      dbReference.collection("users").document(user.uid).updateData({'watchlist': FieldValue.arrayUnion([movie.data])});
     }
 
     void updatePreference(Movie movie, String status) async {
@@ -153,7 +149,7 @@ class MovieCardList extends StatelessWidget {
                 color: Colors.red[800], fontWeight: FontWeight.bold, fontSize: 20, fontStyle: FontStyle.italic)),
             
             ),
-            Text('(${movies[index].releasDate.substring(0,4)})',
+            Text('(${movies[index].releaseDate.substring(0,4)})',
               style: TextStyle(
                   color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 10, fontStyle: FontStyle.italic)),
             Text('Rating: ${movies[index].popularity.round()}/100',
@@ -166,6 +162,9 @@ class MovieCardList extends StatelessWidget {
         cardController: controller,
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
           choosenIndex = index;
+          if(orientation == CardSwipeOrientation.RIGHT) {
+            addToWatchList(movies[index]);
+          }
         },
         swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
           curr = controller;

@@ -1,4 +1,3 @@
-import 'package:cinematch/screens/Index.dart';
 import 'package:cinematch/screens/auth/WelcomePage.dart';
 import 'package:flutter/material.dart';
 

@@ -41,7 +41,7 @@ class Movie {
 
   Map<String, dynamic> get getData => data;
 
-  String get releasDate => _releaseDate;
+  String get releaseDate => _releaseDate;
 
   String get overview => _overview;
 
