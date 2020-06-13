@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> cardList;
   Client client = Client();
   Future<List<Movie>> movies;
-  
+
   @override
   void initState() {
     super.initState();
@@ -44,39 +44,42 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-          title: Text('CINEMATCH',
-              style: TextStyle(
-                  color: Colors.red[800], fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          automaticallyImplyLeading: false,
-          actions: <Widget>[
-            IconButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()),);
-                },
-                icon: Icon(Icons.settings, color: Colors.grey))
-          ]),
-      body: FutureBuilder<List<Movie>>(
-        future: movies,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data == null) {
-              return Text('no data');
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+            title: Text('CINEMATCH',
+                style: TextStyle(
+                    color: Colors.red[800], fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Settings()),
+                    );
+                  },
+                  icon: Icon(Icons.settings, color: Colors.grey))
+            ]),
+        body: FutureBuilder<List<Movie>>(
+          future: movies,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data == null) {
+                return Text('no data');
+              } else {
+                return MovieCardList(movies: snapshot.data, context: context);
+              }
             } else {
-              return MovieCardList(movies: snapshot.data, context: context);
+              return Center(child: CircularProgressIndicator()); // loading
             }
-          } else {
-            return Center(child:CircularProgressIndicator()); // loading
-          }
-        },
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(child: FloatingActionButton(
+          },
+        ),
+        floatingActionButton:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(
+              child: FloatingActionButton(
             onPressed: () {
               curr.triggerLeft();
             },
@@ -84,7 +87,8 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.cancel),
             backgroundColor: Colors.red,
           )),
-          Expanded(child: FloatingActionButton(
+          Expanded(
+              child: FloatingActionButton(
             onPressed: () {
               curr.triggerRight();
             },
@@ -92,8 +96,7 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.favorite),
             backgroundColor: Colors.green,
           )),
-        ])
-    );
+        ]));
   }
 }
 
@@ -112,18 +115,10 @@ class MovieCardList extends StatelessWidget {
       final dbReference = Firestore.instance;
       final FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-      dbReference.collection("users").document(user.uid).updateData({'watchlist': FieldValue.arrayUnion([movie.data])});
+      dbReference.collection("users").document(user.uid). updateData({
+        'watchlist': FieldValue.arrayUnion([movie.data])
+      });
     }
-
-    // void updatePreference(Movie movie, String status) async {
-    //   final dbReference = Firestore.instance;
-    //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-
-    //   dbReference.collection("users").document(user.uid).updateData({
-    //       "preference": FieldValue.arrayUnion([movie.getData])
-    //     }
-    //   );
-    // }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -137,29 +132,38 @@ class MovieCardList extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width * 0.8,
         minHeight: MediaQuery.of(context).size.width * 1,
         cardBuilder: (context, index) => Card(
-          elevation: 5.0,
-          child: Column(children: <Widget>[
-            Image.network('https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text('${movies[index].originalTitle.toUpperCase()}', textAlign: TextAlign.center,
-                style: TextStyle(
-                color: Colors.red[800], fontWeight: FontWeight.bold, fontSize: 20, fontStyle: FontStyle.italic)),
-            
-            ),
-            Text('(${movies[index].releaseDate.substring(0,4)})',
-              style: TextStyle(
-                  color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 10, fontStyle: FontStyle.italic)),
-            Text('Rating: ${movies[index].popularity.round()}/100',
-              style: TextStyle(
-                  color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 15, fontStyle: FontStyle.italic)),
-          ],
-      
-          )
-        ),
+            elevation: 5.0,
+            child: Column(
+              children: <Widget>[
+                Image.network(
+                    'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text('${movies[index].originalTitle.toUpperCase()}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.red[800],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontStyle: FontStyle.italic)),
+                ),
+                Text('(${movies[index].releaseDate.substring(0, 4)})',
+                    style: TextStyle(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        fontStyle: FontStyle.italic)),
+                Text('Rating: ${movies[index].popularity.round()}/100',
+                    style: TextStyle(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic)),
+              ],
+            )),
         cardController: controller,
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
-          if(orientation == CardSwipeOrientation.RIGHT) {
+          if (orientation == CardSwipeOrientation.RIGHT) {
             addToWatchList(movies[index]);
           }
         },
@@ -176,82 +180,79 @@ class MovieCardList extends StatelessWidget {
   }
 }
 
-
 class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        title: Text('SETTINGS', style: TextStyle(color: Colors.grey[900])),
+        appBar: AppBar(
+          elevation: 0.0,
+          title: Text('SETTINGS', style: TextStyle(color: Colors.grey[900])),
+          backgroundColor: Colors.grey[200],
+          centerTitle: true,
+        ),
         backgroundColor: Colors.grey[200],
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.grey[200],
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: <Widget>[
-          Container(
-            height: 50,
-            child: RaisedButton(
-              color: Colors.grey[50],
-              onPressed: () {},
-              child: Text("Preferences"),
+        body: ListView(
+          padding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              height: 50,
+              child: RaisedButton(
+                color: Colors.grey[50],
+                onPressed: () {},
+                child: Text("Preferences"),
+              ),
             ),
-          ),
-          Container(
-            height: 50,
-            child: RaisedButton(
-              color: Colors.grey[50],
-              onPressed: () {},
-              child: Text("Account"),
+            Container(
+              height: 50,
+              child: RaisedButton(
+                color: Colors.grey[50],
+                onPressed: () {},
+                child: Text("Account"),
+              ),
             ),
-          ),
-          Container(
-            height: 50,
-            child: RaisedButton(
-              color: Colors.grey[50],
-              onPressed: () {},
-              child: Text("Help Center"),
+            Container(
+              height: 50,
+              child: RaisedButton(
+                color: Colors.grey[50],
+                onPressed: () {},
+                child: Text("Help Center"),
+              ),
             ),
-          ),
-          Container(
-            height: 50,
-            child: RaisedButton(
-              color: Colors.grey[50],
-              onPressed: () {
-                Alert(
-                  context: context,
-                  type: AlertType.warning,
-                  title: "Wait!",
-                  desc: "Are you sure you want to log out?",
-                  buttons: [
-                    DialogButton(
-                      child: Text(
-                        "Yes",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+            Container(
+              height: 50,
+              child: RaisedButton(
+                color: Colors.grey[50],
+                onPressed: () {
+                  Alert(
+                    context: context,
+                    type: AlertType.warning,
+                    title: "Wait!",
+                    desc: "Are you sure you want to log out?",
+                    buttons: [
+                      DialogButton(
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () =>
+                            Navigator.pushReplacementNamed(context, "/logout"),
+                        color: Colors.red[800],
                       ),
-                      onPressed: () => Navigator.pushReplacementNamed(context, "/logout"),
-                      color: Colors.red[800],
-                    ),
-                    DialogButton(
-                      child: Text(
-                        "No",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      color: Colors.red[800],
-                    )
-                  ],
-                ).show();
-
-                
-              },
-              child: Text("Log Out"),
+                      DialogButton(
+                        child: Text(
+                          "No",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        color: Colors.red[800],
+                      )
+                    ],
+                  ).show();
+                },
+                child: Text("Log Out"),
+              ),
             ),
-          ),
-        ],
-      )
-    );
+          ],
+        ));
   }
 }

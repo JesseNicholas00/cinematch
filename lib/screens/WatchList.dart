@@ -1,8 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cinematch/models/Movie.dart';
 
+Future getWatchListItems() async {
+  String userId;
+  await FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+    userId = user.uid;
+  });
+
+  var data;
+
+  await Firestore.instance
+      .collection("users")
+      .document(userId)
+      .get()
+      .then((DocumentSnapshot ds) {
+    data = ds.data['watchlist'];
+  });
+  return data;
+}
+
+void deleteWatchItem(Map<String, dynamic> item) async {
+  String userId;
+  await FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+    userId = user.uid;
+  });
+
+  await Firestore.instance.collection("users").document(userId).updateData({
+    'watchlist': FieldValue.arrayRemove([item])
+  });
+}
+
+void updatePreference(data, DismissDirection direction) async {
+  Movie movie = Movie.fromJSON(data);
+  String userId;
+  final Firestore dbReference = Firestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  await auth.currentUser().then((FirebaseUser user) {
+    userId = user.uid;
+  });
+
+  Future<DocumentSnapshot> userData =
+      dbReference.collection('users').document(userId).get();
+
+  Map<String, int> preference = {};
+  print(userData);
+  userData.then((snapshot) {
+    print(snapshot);
+    preference = snapshot.data['preference'];
+  });
+  print(preference);
+  if (direction == DismissDirection.startToEnd) {
+    print(preference);
+    for (int i = 0; i < movie.genreIds.length; i++) {
+      String key = movie.genreIds[i].toString();
+      if (preference[movie.genreIds[i]] == null) {
+        preference.putIfAbsent(key, () => 1);
+      } else {
+        preference.update(
+            key, (value) => (value == null ? 0 : value) + 1);
+      }
+    }
+  } else {
+    for (int i = 0; i < movie.genreIds.length; i++) {
+      String key = movie.genreIds[i].toString();
+      if (preference[movie.genreIds[i]] == null) {
+        preference.putIfAbsent(key, () => - 1);
+      } else {
+        preference.update(
+            key, (value) => (value == null ? 0 : value) - 1);
+      }
+    }
+  }
+
+  dbReference
+      .collection('users')
+      .document(userId)
+      .updateData({'preference': preference});
+}
+
 class Watchlist extends StatefulWidget {
+  Watchlist({Key key}) : super(key: key);
   @override
   _WatchListState createState() => _WatchListState();
 }
@@ -10,105 +89,68 @@ class Watchlist extends StatefulWidget {
 class _WatchListState extends State<Watchlist> {
   final dbReference = Firestore.instance;
 
-  List<Movie> watchlist = [];
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: dbReference
-          .collection("watchlist")
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) return const Text('Loading...');
-        final int messageCount = snapshot.data.documents.length;
-        return ListView.builder(
-          itemCount: messageCount,
-          itemBuilder: (_, int index) {
-            final DocumentSnapshot document = snapshot.data.documents[index];
-            final dynamic message = document['title'];
-            return ListTile(
-              trailing: IconButton(
-                onPressed: () => document.reference.delete(),
-                icon: Icon(Icons.delete),
-              ),
-              title: Text(
-                message != null ? message.toString() : '<No message retrieved>',
-              ),
-              subtitle: Text('Message ${index + 1} of $messageCount'),
-            );
-          },
-        );
-      },
-    );
-  }
+    return Scaffold(
+        appBar: AppBar(
+            title: Text('WATCHLIST',
+                style: TextStyle(
+                    color: Colors.red[800], fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            automaticallyImplyLeading: false),
+        body: Container(
+          child: FutureBuilder(
+            future: getWatchListItems(),
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: Colors.white,
-  //     body: ListView(
-  //       children: <Widget>[
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Cupcake"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Donus"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Eclair"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Froyo"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Gingerbread"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Honeycomb"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Ice Cream Sandwich"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Jelly Bean"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Jelly Bean"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Kitkat"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Lollipop"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Marshmallow"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Nougat"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Oreo"),
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.all(8.0),
-  //           child: Text("Android Pie"),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final item = snapshot.data[index]["title"];
+
+                  return Dismissible(
+                    //Each Dismissible must contain a Key. Keys allow Flutter to
+                    //uniquely identify widgets.
+                    key: UniqueKey(),
+                    //Provide a function that tells the app
+                    //what to do after an item has been swiped away.
+                    onDismissed: (direction) {
+                      // Remove the item from the data source.
+                      setState(() {
+                        updatePreference(snapshot.data[index], direction);
+                        deleteWatchItem(snapshot.data[index]);
+                        snapshot.data.removeAt(index);
+                      });
+                      // Then show a snackbar.
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text("$item dismissed")));
+                    },
+                    // Show a red background as the item is swiped away.
+                    background: Container(
+                        child: Align(
+                          alignment: Alignment
+                              .centerRight, // Align however you like (i.e .centerRight, centerLeft)
+                          child: Text("remove ",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        color: Colors.red),
+                    child: ListTile(title: Text('$item')),
+                  );
+                },
+              );
+            },
+          ),
+        ));
+  }
 }
