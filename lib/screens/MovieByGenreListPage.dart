@@ -67,10 +67,10 @@ class _MovieByGenreListPageState extends State<MovieByGenreListPage> {
 
   @override
   Widget build(BuildContext context) {
-    //String genreChoosen = genreDict[genreId];
+    String genreChoosen = "genreDict[genreId]";
     return Scaffold(
       appBar: AppBar(
-          title: Text('SEARCH',
+          title: Text(genreChoosen,
               style: TextStyle(
                   color: Colors.red[800], fontWeight: FontWeight.bold)),
           backgroundColor: Colors.white,
@@ -113,7 +113,10 @@ class MovieList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 3/6,
+            ),
       itemCount: movies.length, 
       itemBuilder: (context, index) {
         return Container(
@@ -121,13 +124,42 @@ class MovieList extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.0)
           ),
           child: InkResponse(
-            splashColor: Colors.red,
-            enableFeedback: true,
-            child: Image.network(
-              'https://image.tmdb.org/t/p/w185${movies[index].posterPath}',
+              customBorder: null,
+              splashColor: Colors.red[800],
+              enableFeedback: true,
+              child: Container( 
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight:  Radius.circular(20)),
+                      child:Image.network(
+                        'https://image.tmdb.org/t/p/w185${movies[index].posterPath}',
+                        fit: BoxFit.fitWidth,),  
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      child: Text('${movies[index].originalTitle} (${movies[index].releaseDate.substring(0,4)})', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 15, )),
+                      padding: EdgeInsets.all(6),
+                      alignment: Alignment.center
+                    )
+                  ],),
+                decoration: BoxDecoration(
+                  color: Colors.red[800],
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow:[
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 3,
+                      offset: Offset(0, 0), 
+                    ),
+                  ],
+                ),
+                
+              ),
+              onTap: () => goToMovieDetailPage(movies[index], genreDict),
             ),
-            onTap: () => goToMovieDetailPage(movies[index], genreDict),
-          ),
+          padding: EdgeInsets.all(4),
         );
       });
   }
