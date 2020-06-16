@@ -18,6 +18,7 @@ Future getWatchListItems() async {
       .then((DocumentSnapshot ds) {
     data = ds.data['watchlist'];
   });
+
   return data;
 }
 

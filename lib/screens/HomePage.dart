@@ -9,15 +9,45 @@ import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 Future<List<Movie>> fetchMovies(Client client) async {
+
   final response = await client.get(
       'https://api.themoviedb.org/3/movie/popular?api_key=47cdc06d19f09328eac1f45414e6593b&language=en-US&page=1');
   final parsed = jsonDecode(response.body);
+
+  var data;
+
+  String userId;
+  await FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+    userId = user.uid;
+  });
+
+  await Firestore.instance
+      .collection("users")
+      .document(userId)
+      .get()
+      .then((DocumentSnapshot ds) {
+      
+    data = ds.data['watchlist'];
+  });
+
+  List<Movie> watchlist = [];
+  
+  for(int i = 0; i < data.length; i++) {
+    watchlist.add(Movie.fromJSON(data[i]));
+  }
 
   List<Movie> movies = [];
 
   for (int i = 0; i < parsed['results'].length; i++) {
     Movie movie = Movie.fromJSON(parsed['results'][i]);
-    movies.add(movie);
+    bool containedInWatchlist = false;
+    for (var item in watchlist) {
+      if(movie.id == item.id) {
+        containedInWatchlist = true;
+        break;
+      }
+    }
+    if(!containedInWatchlist)movies.add(movie);
   }
 
   return movies;
@@ -34,6 +64,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> cardList;
   Client client = Client();
   Future<List<Movie>> movies;
+  List<Movie> watchlist = [];
 
   @override
   void initState() {
@@ -62,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(Icons.settings, color: Colors.grey))
             ]),
-        body: FutureBuilder<List<Movie>>(
+        body: FutureBuilder<List<Movie>> (
           future: movies,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
@@ -115,7 +146,7 @@ class MovieCardList extends StatelessWidget {
       final dbReference = Firestore.instance;
       final FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-      dbReference.collection("users").document(user.uid). updateData({
+      dbReference.collection("users").document(user.uid).updateData({
         'watchlist': FieldValue.arrayUnion([movie.data])
       });
     }
@@ -132,60 +163,62 @@ class MovieCardList extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width * 0.8,
         minHeight: MediaQuery.of(context).size.width * 0.9,
         cardBuilder: (context, index) => Card(
-           shape: RoundedRectangleBorder(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
             elevation: 5.0,
-            child: Scrollbar(child: SingleChildScrollView( 
-              padding: EdgeInsets.symmetric(horizontal:20.0),
-              child:Column(
-              children: <Widget>[
-                SizedBox(height: 5),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  child:Image.network(
-                    'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}',
-                    fit: BoxFit.fitWidth
-                    ),
-                  ),
-                SizedBox(height: 5),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal:10.0),
-                  child: Text('${movies[index].originalTitle.toUpperCase()}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.red[800],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          fontStyle: FontStyle.italic)),
-                ),
-                SizedBox(height: 5),
-                Text('(${movies[index].releaseDate.substring(0, 4)})',
-                    style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic)),
-                Text('Rating: ${movies[index].popularity.round()}/100',
-                    style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        fontStyle: FontStyle.italic)),
-                SizedBox(height:5),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal:20.0),
-                  child:Text(
-                    '${movies[index].overview}',
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.black54, fontSize: 12, fontStyle: FontStyle.italic),
-                ))
-              ],
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 5),
+                      ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        child: Image.network(
+                            'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}',
+                            fit: BoxFit.fitWidth),
+                      ),
+                      SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                            '${movies[index].originalTitle.toUpperCase()}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.red[800],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                fontStyle: FontStyle.italic)),
+                      ),
+                      SizedBox(height: 5),
+                      Text('(${movies[index].releaseDate.substring(0, 4)})',
+                          style: TextStyle(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              fontStyle: FontStyle.italic)),
+                      Text('Rating: ${movies[index].popularity.round()}/100',
+                          style: TextStyle(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic)),
+                      SizedBox(height: 5),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text(
+                            '${movies[index].overview}',
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic),
+                          ))
+                    ],
+                  )),
+              //isAlwaysShown: true,
             )),
-            //isAlwaysShown: true,
-            )
-            
-            ),
         cardController: controller,
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
           if (orientation == CardSwipeOrientation.RIGHT) {
