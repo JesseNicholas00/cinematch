@@ -128,17 +128,29 @@ class MovieCardList extends StatelessWidget {
         stackNum: 3,
         swipeEdge: 4.0,
         maxWidth: MediaQuery.of(context).size.width * 0.9,
-        maxHeight: MediaQuery.of(context).size.width * 2,
+        maxHeight: MediaQuery.of(context).size.width * 1.2,
         minWidth: MediaQuery.of(context).size.width * 0.8,
-        minHeight: MediaQuery.of(context).size.width * 1,
+        minHeight: MediaQuery.of(context).size.width * 0.9,
         cardBuilder: (context, index) => Card(
+           shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
             elevation: 5.0,
-            child: Column(
+            child: Scrollbar(child: SingleChildScrollView( 
+              padding: EdgeInsets.symmetric(horizontal:20.0),
+              child:Column(
               children: <Widget>[
-                Image.network(
-                    'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}'),
+                SizedBox(height: 5),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  child:Image.network(
+                    'https://image.tmdb.org/t/p/w185/${movies[index].posterPath}',
+                    fit: BoxFit.fitWidth
+                    ),
+                  ),
+                SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.symmetric(horizontal:10.0),
                   child: Text('${movies[index].originalTitle.toUpperCase()}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -147,6 +159,7 @@ class MovieCardList extends StatelessWidget {
                           fontSize: 20,
                           fontStyle: FontStyle.italic)),
                 ),
+                SizedBox(height: 5),
                 Text('(${movies[index].releaseDate.substring(0, 4)})',
                     style: TextStyle(
                         color: Colors.grey[700],
@@ -159,8 +172,20 @@ class MovieCardList extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                         fontStyle: FontStyle.italic)),
+                SizedBox(height:5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:20.0),
+                  child:Text(
+                    '${movies[index].overview}',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(color: Colors.black54, fontSize: 12, fontStyle: FontStyle.italic),
+                ))
               ],
             )),
+            //isAlwaysShown: true,
+            )
+            
+            ),
         cardController: controller,
         swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
           if (orientation == CardSwipeOrientation.RIGHT) {
