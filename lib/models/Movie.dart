@@ -12,7 +12,7 @@ class Movie {
   String _backdropPath;
   bool _adult;
   String _overview;
-  String _releaseDate;
+  String _releaseDate = "unknown";
 
   Map<String,dynamic> data;
 
