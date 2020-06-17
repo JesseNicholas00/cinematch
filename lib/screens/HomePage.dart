@@ -9,31 +9,32 @@ import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 Future<List<Movie>> fetchMovies(Client client) async {
-
-  final response = await client.get(
-      'https://api.themoviedb.org/3/movie/popular?api_key=47cdc06d19f09328eac1f45414e6593b&language=en-US&page=1');
-  final parsed = jsonDecode(response.body);
-
-  var data;
+  final Firestore dbReference = Firestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   String userId;
-  await FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+  await auth.currentUser().then((FirebaseUser user) {
     userId = user.uid;
   });
 
-  await Firestore.instance
-      .collection("users")
-      .document(userId)
-      .get()
-      .then((DocumentSnapshot ds) {
-      
-    data = ds.data['watchlist'];
+  DocumentSnapshot ds =
+      await dbReference.collection('users').document(userId).get();
+
+  Map<String, dynamic> preference = ds.data['preference'];
+  String genreToken = "";
+
+  preference.forEach((key, value) {
+    if (value < 0) genreToken += key + ",";
   });
 
+  final response = await client.get(
+      'https://api.themoviedb.org/3/discover/movie?api_key=47cdc06d19f09328eac1f45414e6593b&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&without_genres=$genreToken');
+  final parsed = jsonDecode(response.body);
+
   List<Movie> watchlist = [];
-  
-  for(int i = 0; i < data.length; i++) {
-    watchlist.add(Movie.fromJSON(data[i]));
+
+  for (int i = 0; i < ds.data['watchlist'].length; i++) {
+    watchlist.add(Movie.fromJSON(ds.data['watchlist'][i]));
   }
 
   List<Movie> movies = [];
@@ -42,12 +43,12 @@ Future<List<Movie>> fetchMovies(Client client) async {
     Movie movie = Movie.fromJSON(parsed['results'][i]);
     bool containedInWatchlist = false;
     for (var item in watchlist) {
-      if(movie.id == item.id) {
+      if (movie.id == item.id) {
         containedInWatchlist = true;
         break;
       }
     }
-    if(!containedInWatchlist)movies.add(movie);
+    if (!containedInWatchlist) movies.add(movie);
   }
 
   return movies;
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(Icons.settings, color: Colors.grey))
             ]),
-        body: FutureBuilder<List<Movie>> (
+        body: FutureBuilder<List<Movie>>(
           future: movies,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
@@ -198,7 +199,7 @@ class MovieCardList extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                               fontStyle: FontStyle.italic)),
-                      Text('Rating: ${movies[index].popularity.round()}/100',
+                      Text('Rating: ${movies[index].voteAverage}/10',
                           style: TextStyle(
                               color: Colors.grey[700],
                               fontWeight: FontWeight.bold,

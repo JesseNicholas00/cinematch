@@ -42,36 +42,19 @@ void updatePreference(data, DismissDirection direction) async {
     userId = user.uid;
   });
 
-  Future<DocumentSnapshot> userData =
-      dbReference.collection('users').document(userId).get();
+  DocumentSnapshot userData =
+      await dbReference.collection('users').document(userId).get();
 
-  Map<String, int> preference = {};
-  print(userData);
-  userData.then((snapshot) {
-    print(snapshot);
-    preference = snapshot.data['preference'];
-  });
-  print(preference);
-  if (direction == DismissDirection.startToEnd) {
-    print(preference);
-    for (int i = 0; i < movie.genreIds.length; i++) {
-      String key = movie.genreIds[i].toString();
-      if (preference[movie.genreIds[i]] == null) {
-        preference.putIfAbsent(key, () => 1);
-      } else {
-        preference.update(
-            key, (value) => (value == null ? 0 : value) + 1);
-      }
-    }
-  } else {
-    for (int i = 0; i < movie.genreIds.length; i++) {
-      String key = movie.genreIds[i].toString();
-      if (preference[movie.genreIds[i]] == null) {
-        preference.putIfAbsent(key, () => - 1);
-      } else {
-        preference.update(
-            key, (value) => (value == null ? 0 : value) - 1);
-      }
+  Map<String, dynamic> preference = userData.data['preference'];
+  int modification = direction == DismissDirection.startToEnd ? 1 : -1;
+
+  for (int i = 0; i < movie.genreIds.length; i++) {
+    String key = movie.genreIds[i].toString();
+    if (preference[movie.genreIds[i]] == null) {
+      preference.putIfAbsent(key, () => modification);
+    } else {
+      preference.update(
+          key, (value) => (value == null ? 0 : value) + modification);
     }
   }
 
