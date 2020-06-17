@@ -8,8 +8,6 @@ import 'dart:convert';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:cinematch/screens/Settings.dart';
 
-
-
 Future<List<Movie>> fetchMovies(Client client) async {
   final Firestore dbReference = Firestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;

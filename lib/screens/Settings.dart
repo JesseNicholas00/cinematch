@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'auth/WelcomePage.dart';
 
 class Settings extends StatelessWidget {
   @override
@@ -14,30 +17,6 @@ class Settings extends StatelessWidget {
         body: ListView(
           padding: const EdgeInsets.all(8),
           children: <Widget>[
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Preferences"),
-              ),
-            ),
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Account"),
-              ),
-            ),
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Help Center"),
-              ),
-            ),
             Container(
               height: 50,
               child: RaisedButton(
