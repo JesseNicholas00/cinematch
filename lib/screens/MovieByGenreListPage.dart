@@ -67,10 +67,9 @@ class _MovieByGenreListPageState extends State<MovieByGenreListPage> {
 
   @override
   Widget build(BuildContext context) {
-    String genreChoosen = "genreDict[genreId]";
     return Scaffold(
       appBar: AppBar(
-          title: Text(genreChoosen,
+          title: Text('BROWSE',
               style: TextStyle(
                   color: Colors.red[800], fontWeight: FontWeight.bold)),
           backgroundColor: Colors.white,

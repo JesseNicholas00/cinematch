@@ -8,6 +8,8 @@ import 'dart:convert';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+
+
 Future<List<Movie>> fetchMovies(Client client) async {
   final Firestore dbReference = Firestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -257,30 +259,6 @@ class Settings extends StatelessWidget {
               height: 50,
               child: RaisedButton(
                 color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Preferences"),
-              ),
-            ),
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Account"),
-              ),
-            ),
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
-                onPressed: () {},
-                child: Text("Help Center"),
-              ),
-            ),
-            Container(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.grey[50],
                 onPressed: () {
                   Alert(
                     context: context,
@@ -310,8 +288,11 @@ class Settings extends StatelessWidget {
                 },
                 child: Text("Log Out"),
               ),
+              margin: EdgeInsets.all(20),
             ),
           ],
         ));
   }
 }
+
+
