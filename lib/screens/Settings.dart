@@ -34,7 +34,6 @@ class Settings extends StatelessWidget {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                         onPressed: () {
-                          FirebaseAuth.instance.signOut();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
